@@ -32,7 +32,7 @@
 #endif
 
 #ifdef DEBUG
-#define WY_LOG(fmt, ...)		NSLog((@"%s (%d) : " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define WY_LOG(fmt, ...)        NSLog((@"%s (%d) : " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
 #define WY_LOG(...)
 #endif
@@ -50,10 +50,10 @@
 
 @interface UIColor (WYPopover)
 
-- (BOOL)getValueOfRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)apha;
+- (BOOL)getValueOfRed:(CGFloat*)red green:(CGFloat*)green blue:(CGFloat*)blue alpha:(CGFloat*)apha;
 - (NSString *)hexString;
-- (UIColor *)colorByLighten:(float)d;
-- (UIColor *)colorByDarken:(float)d;
+- (UIColor *)colorByLighten:(CGFloat)d;
+- (UIColor *)colorByDarken:(CGFloat)d;
 
 @end
 
@@ -70,7 +70,7 @@
     CGColorSpaceModel colorSpaceModel = CGColorSpaceGetModel(colorSpace);
     CGColorSpaceRelease(colorSpace);
     
-    CGFloat rFloat = 0.0, gFloat = 0.0, bFloat = 0.0, aFloat = 0.0;
+    CGFloat rFloat = 0, gFloat = 0, bFloat = 0, aFloat = 0;
     BOOL result = NO;
     
     if (colorSpaceModel == kCGColorSpaceModelRGB)
@@ -106,7 +106,7 @@
     return [NSString stringWithFormat:@"#%02x%02x%02x%02x", r, g, b, a];
 }
 
-- (UIColor *)colorByLighten:(float)d
+- (UIColor *)colorByLighten:(CGFloat)d
 {
     CGFloat rFloat, gFloat, bFloat, aFloat;
     [self getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
@@ -117,7 +117,7 @@
                            alpha:1.0];
 }
 
-- (UIColor *)colorByDarken:(float)d
+- (UIColor *)colorByDarken:(CGFloat)d
 {
     CGFloat rFloat, gFloat, bFloat, aFloat;
     [self getValueOfRed:&rFloat green:&gFloat blue:&bFloat alpha:&aFloat];
@@ -210,9 +210,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 #pragma clang diagnostic pop
     
 #ifdef WY_BASE_SDK_7_ENABLED
-    if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
-        [self setPreferredContentSize:aContentSize];
-    }
+    [self setPreferredContentSize:aContentSize];
 #endif
 }
 
@@ -221,9 +219,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     if (self.isEmbedInPopover)
     {
 #ifdef WY_BASE_SDK_7_ENABLED
-        if ([aViewController respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
-            aViewController.edgesForExtendedLayout = UIRectEdgeNone;
-        }
+        aViewController.edgesForExtendedLayout = UIRectEdgeNone;
 #endif
         CGSize contentSize = [self contentSize:aViewController];
         [self setContentSize:contentSize];
@@ -333,7 +329,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 
 @property (nonatomic, assign) WYPopoverArrowDirection arrowDirection;
 @property (nonatomic, assign) CGSize areaSize;
-@property (nonatomic, assign, readonly) float value;
+@property (nonatomic, assign, readonly) CGFloat value;
 
 @end
 
@@ -376,14 +372,14 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     return [NSString stringWithFormat:@"%@ [ %f x %f ]", direction, areaSize.width, areaSize.height];
 }
 
-- (float)value
+- (CGFloat)value
 {
-    float result = 0;
+    CGFloat result = 0;
     
     if (areaSize.width > 0 && areaSize.height > 0)
     {
-        float w1 = ceilf(areaSize.width / 10.0);
-        float h1 = ceilf(areaSize.height / 10.0);
+        CGFloat w1 = ceilf(areaSize.width / 10.0);
+        CGFloat h1 = ceilf(areaSize.height / 10.0);
         
         result = (w1 * h1);
     }
@@ -507,9 +503,9 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
     return result;
 }
 
-- (NSUInteger)innerCornerRadius
+- (CGFloat)innerCornerRadius
 {
-    float result = innerCornerRadius;
+    CGFloat result = innerCornerRadius;
     
     if (borderWidth == 0)
     {
@@ -615,7 +611,7 @@ static char const * const UINavigationControllerEmbedInPopoverTagKey = "UINaviga
 
 @implementation UIImage (WYPopover)
 
-static float edgeSizeFromCornerRadius(float cornerRadius) {
+static CGFloat edgeSizeFromCornerRadius(CGFloat cornerRadius) {
     return cornerRadius * 2 + 1;
 }
 
@@ -625,9 +621,9 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 }
 
 + (UIImage *)imageWithColor:(UIColor *)color
-               cornerRadius:(float)cornerRadius
+               cornerRadius:(CGFloat)cornerRadius
 {
-    float min = edgeSizeFromCornerRadius(cornerRadius);
+    CGFloat min = edgeSizeFromCornerRadius(cornerRadius);
     
     CGSize minSize = CGSizeMake(min, min);
     
@@ -636,7 +632,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 + (UIImage *)imageWithColor:(UIColor *)color
                        size:(CGSize)aSize
-               cornerRadius:(float)cornerRadius
+               cornerRadius:(CGFloat)cornerRadius
 {
     CGRect rect = CGRectMake(0, 0, aSize.width, aSize.height);
     UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:cornerRadius];
@@ -661,17 +657,17 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 @property (nonatomic, strong) UIColor *gradientTopColor;
 @property (nonatomic, strong) UIColor *gradientBottomColor;
-@property (nonatomic, assign) float  gradientHeight;
-@property (nonatomic, assign) float  gradientTopPosition;
+@property (nonatomic, assign) CGFloat  gradientHeight;
+@property (nonatomic, assign) CGFloat  gradientTopPosition;
 
 @property (nonatomic, strong) UIColor *innerShadowColor;
 @property (nonatomic, assign) CGSize   innerShadowOffset;
-@property (nonatomic, assign) float  innerShadowBlurRadius;
-@property (nonatomic, assign) float  innerCornerRadius;
+@property (nonatomic, assign) CGFloat  innerShadowBlurRadius;
+@property (nonatomic, assign) CGFloat  innerCornerRadius;
 
-@property (nonatomic, assign) float  navigationBarHeight;
+@property (nonatomic, assign) CGFloat  navigationBarHeight;
 @property (nonatomic, assign) BOOL     wantsDefaultContentAppearance;
-@property (nonatomic, assign) float  borderWidth;
+@property (nonatomic, assign) CGFloat  borderWidth;
 
 @end
 
@@ -718,14 +714,12 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     NSArray* fillGradientColors = [NSArray arrayWithObjects:
                                    (id)gradientTopColor.CGColor,
                                    (id)gradientBottomColor.CGColor, nil];
-    
-    CGFloat fillGradientLocations[2] = { 0, 1 };
-    
+    CGFloat fillGradientLocations[] = {0, 1};
     CGGradientRef fillGradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)fillGradientColors, fillGradientLocations);
     
     //// innerRect Drawing
-    float barHeight = (wantsDefaultContentAppearance == NO) ? navigationBarHeight : 0;
-    float cornerRadius = (wantsDefaultContentAppearance == NO) ? innerCornerRadius : 0;
+    CGFloat barHeight = (wantsDefaultContentAppearance == NO) ? navigationBarHeight : 0;
+    CGFloat cornerRadius = (wantsDefaultContentAppearance == NO) ? innerCornerRadius : 0;
     
     CGRect innerRect = CGRectMake(CGRectGetMinX(rect), CGRectGetMinY(rect) + barHeight, CGRectGetWidth(rect) , CGRectGetHeight(rect) - barHeight);
     
@@ -791,10 +785,11 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 @interface WYPopoverOverlayView : UIView
 {
-    BOOL testHits;
+    BOOL _isAccessible;
 }
 
 @property(nonatomic, assign) id <WYPopoverOverlayViewDelegate> delegate;
+@property(nonatomic, assign) BOOL testHits;
 @property(nonatomic, unsafe_unretained) NSArray *passthroughViews;
 
 @end
@@ -808,6 +803,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 @protocol WYPopoverOverlayViewDelegate <NSObject>
 
 @optional
+//- (void)popoverOverlayView:(WYPopoverOverlayView *)overlayView didTouchAtPoint:(CGPoint)point;
 - (void)popoverOverlayViewDidTouch:(WYPopoverOverlayView *)overlayView;
 
 @end
@@ -819,8 +815,26 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 @implementation WYPopoverOverlayView
 
+- (id)initWithFrame:(CGRect)aFrame
+{
+    self = [super initWithFrame:aFrame];
+    if (self)
+    {
+        self.autoresizesSubviews = NO;
+        self.accessibilityTraits = UIAccessibilityTraitNone;
+    }
+    return self;
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    //UITouch *oneTouch = [touches anyObject];
+    
+    //if ([self.delegate respondsToSelector:@selector(popoverOverlayView:didTouchAtPoint:)])
+    //{
+    //    [self.delegate popoverOverlayView:self didTouchAtPoint:[oneTouch locationInView:self]];
+    //}
+    
     if ([self.delegate respondsToSelector:@selector(popoverOverlayViewDidTouch:)])
     {
         [self.delegate popoverOverlayViewDidTouch:self];
@@ -829,7 +843,8 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (testHits) {
+    if (self.testHits)
+    {
         return NO;
     }
     
@@ -837,9 +852,9 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     
     if (view == self)
     {
-        testHits = YES;
+        self.testHits = YES;
         UIView *superHitView = [self.superview hitTest:point withEvent:event];
-        testHits = NO;
+        self.testHits = NO;
         
         if ([self isPassthroughView:superHitView])
         {
@@ -852,23 +867,27 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 
 - (BOOL)isPassthroughView:(UIView *)view
 {
-	if (view == nil)
+    if (view == nil)
     {
-		return NO;
-	}
-	
-	if ([self.passthroughViews containsObject:view])
+        return NO;
+    }
+    
+    if ([self.passthroughViews containsObject:view])
     {
-		return YES;
-	}
-	
-	return [self isPassthroughView:view.superview];
+        return YES;
+    }
+    
+    return [self isPassthroughView:view.superview];
 }
 
 #pragma mark - UIAccessibility
 
 - (void)accessibilityElementDidBecomeFocused {
     self.accessibilityLabel = NSLocalizedString(@"Double-tap to dismiss pop-up window.", nil);
+}
+
+- (void)accessibilityElementDidLoseFocus {
+    
 }
 
 @end
@@ -898,12 +917,10 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 @property (nonatomic, assign) WYPopoverArrowDirection arrowDirection;
 
 @property (nonatomic, strong, readonly) UIView *contentView;
-@property (nonatomic, assign, readonly) float navigationBarHeight;
+@property (nonatomic, assign, readonly) CGFloat navigationBarHeight;
 @property (nonatomic, assign, readonly) UIEdgeInsets outerShadowInsets;
-@property (nonatomic, assign) float arrowOffset;
+@property (nonatomic, assign) CGFloat arrowOffset;
 @property (nonatomic, assign) BOOL wantsDefaultContentAppearance;
-
-@property (nonatomic, assign, getter = isAppearing) BOOL appearing;
 
 - (void)setViewController:(UIViewController *)viewController;
 
@@ -988,33 +1005,11 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     return self;
 }
 
-/*
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-    BOOL result = [super pointInside:point withEvent:event];
-    
-    if (self.isAppearing == NO)
-    {
-        BOOL isTouched = [self isTouchedAtPoint:point];
-        
-        if (isTouched == NO && UIAccessibilityIsVoiceOverRunning())
-        {
-            UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil);
-            UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, NSLocalizedString(@"Double-tap to dismiss pop-up window.", nil));
-        }
-    }
-    
-    return result;
-}
-*/
-
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch *oneTouch = [touches anyObject];
-    CGPoint point = [oneTouch locationInView:self];
     
-    if ([self isTouchedAtPoint:point] == NO)
+    if ([self isTouchedAtPoint:[oneTouch locationInView:self]] == NO)
     {
         if ([self.delegate respondsToSelector:@selector(popoverBackgroundViewDidTouchOutside:)])
         {
@@ -1035,9 +1030,9 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
     return result;
 }
 
-- (void)setArrowOffset:(float)value
+- (void)setArrowOffset:(CGFloat)value
 {
-    float coef = 1;
+    CGFloat coef = 1;
     
     if (value != 0)
     {
@@ -1047,7 +1042,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         
         CGRect outerRect = [self outerRect];
         
-        float delta = self.arrowBase / 2. + .5;
+        CGFloat delta = self.arrowBase / 2. + .5;
         
         delta  += MIN(minOuterCornerRadius, outerCornerRadius);
         
@@ -1202,8 +1197,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         NSArray* fillGradientColors = [NSArray arrayWithObjects:
                                        (id)self.fillTopColor.CGColor,
                                        (id)self.fillBottomColor.CGColor, nil];
-        
-        CGFloat fillGradientLocations[2] = {0, 1};
+        CGFloat fillGradientLocations[] = {0, 1};
         CGGradientRef fillGradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)fillGradientColors, fillGradientLocations);
         
         // Frames
@@ -1217,7 +1211,7 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         
         CGPoint origin = CGPointZero;
         
-        float reducedOuterCornerRadius = 0;
+        CGFloat reducedOuterCornerRadius = 0;
         
         if (arrowDirection == WYPopoverArrowDirectionUp || arrowDirection == WYPopoverArrowDirectionDown)
         {
@@ -1358,8 +1352,8 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
         
         CGContextSaveGState(context);
         {
-            float xOffset = glossShadowOffset.width + round(outerRectBorderRect.size.width);
-            float yOffset = glossShadowOffset.height;
+            CGFloat xOffset = glossShadowOffset.width + round(outerRectBorderRect.size.width);
+            CGFloat yOffset = glossShadowOffset.height;
             CGContextSetShadowWithColor(context,
                                         CGSizeMake(xOffset + copysign(0.1, xOffset), yOffset + copysign(0.1, yOffset)),
                                         glossShadowBlurRadius,
@@ -1565,12 +1559,12 @@ static float edgeSizeFromCornerRadius(float cornerRadius) {
 - (WYPopoverArrowDirection)arrowDirectionForRect:(CGRect)aRect
                                           inView:(UIView*)aView
                                      contentSize:(CGSize)aContentSize
-                                     arrowHeight:(float)aArrowHeight
+                                     arrowHeight:(CGFloat)aArrowHeight
                         permittedArrowDirections:(WYPopoverArrowDirection)aArrowDirections;
 
 - (CGSize)sizeForRect:(CGRect)aRect
                inView:(UIView *)aView
-          arrowHeight:(float)aArrowHeight
+          arrowHeight:(CGFloat)aArrowHeight
        arrowDirection:(WYPopoverArrowDirection)aArrowDirection;
 
 - (void)registerTheme;
@@ -1635,7 +1629,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     return defaultTheme_;
 }
 
-+ (void)load
++ (void)initialize
 {
     [WYPopoverController setDefaultTheme:[WYPopoverTheme theme]];
 }
@@ -1717,8 +1711,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     NSArray *keypaths = [theme observableKeypaths];
     for (NSString *keypath in keypaths) {
-		[theme addObserver:self forKeyPath:keypath options:NSKeyValueObservingOptionNew context:NULL];
-	}
+        [theme addObserver:self forKeyPath:keypath options:NSKeyValueObservingOptionNew context:NULL];
+    }
 }
 
 - (void)unregisterTheme
@@ -1906,33 +1900,19 @@ static WYPopoverTheme *defaultTheme_ = nil;
     animated = aAnimated;
     options = aOptions;
     
-    if (!inView)
-    {
-        inView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
-        if (CGRectIsEmpty(rect))
-        {
-            rect = CGRectMake((int)inView.bounds.size.width / 2 - 5, (int)inView.bounds.size.height / 2 - 5, 10, 10);
-        }
-    }
-    
     CGSize contentViewSize = self.popoverContentSize;
     
     if (overlayView == nil)
     {
         overlayView = [[WYPopoverOverlayView alloc] initWithFrame:inView.window.bounds];
-        overlayView.autoresizesSubviews = NO;
-        overlayView.isAccessibilityElement = YES;
-        overlayView.accessibilityTraits = UIAccessibilityTraitNone;
         overlayView.delegate = self;
+        overlayView.userInteractionEnabled = YES;
         overlayView.passthroughViews = passthroughViews;
         
         backgroundView = [[WYPopoverBackgroundView alloc] initWithContentSize:contentViewSize];
-        backgroundView.appearing = YES;
-        backgroundView.isAccessibilityElement = YES;
-        backgroundView.accessibilityTraits = UIAccessibilityTraitNone;
-        
         backgroundView.delegate = self;
         backgroundView.hidden = YES;
+        backgroundView.accessibilityViewIsModal = YES;
         
         [inView.window addSubview:backgroundView];
         [inView.window insertSubview:overlayView belowSubview:backgroundView];
@@ -1953,6 +1933,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
                 [strongSelf->viewController viewDidAppear:YES];
             }
             
+            strongSelf->backgroundView.accessibilityViewIsModal = NO;
+            
             if ([strongSelf->viewController respondsToSelector:@selector(preferredContentSize)])
             {
                 [strongSelf->viewController addObserver:self forKeyPath:NSStringFromSelector(@selector(preferredContentSize)) options:0 context:nil];
@@ -1961,8 +1943,6 @@ static WYPopoverTheme *defaultTheme_ = nil;
             {
                 [strongSelf->viewController addObserver:self forKeyPath:NSStringFromSelector(@selector(contentSizeForViewInPopover)) options:0 context:nil];
             }
-            
-            strongSelf->backgroundView.appearing = NO;
         }
         
         if (completion)
@@ -1977,17 +1957,15 @@ static WYPopoverTheme *defaultTheme_ = nil;
         
     };
     
-    void (^adjustTintDimmed)() = ^() {
 #ifdef WY_BASE_SDK_7_ENABLED
-        if ([inView.window respondsToSelector:@selector(setTintAdjustmentMode:)]) {
-            for (UIView *subview in inView.window.subviews) {
-                if (subview != backgroundView) {
-                    [subview setTintAdjustmentMode:UIViewTintAdjustmentModeDimmed];
-                }
+    if ([inView.window respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+        for (UIView *subview in inView.window.subviews) {
+            if (subview != backgroundView) {
+                [subview setTintAdjustmentMode:UIViewTintAdjustmentModeDimmed];
             }
         }
+    }
 #endif
-    };
     
     backgroundView.hidden = NO;
     
@@ -2018,14 +1996,12 @@ static WYPopoverTheme *defaultTheme_ = nil;
                 strongSelf->backgroundView.alpha = 1;
                 strongSelf->backgroundView.transform = endTransform;
             }
-            adjustTintDimmed();
         } completion:^(BOOL finished) {
             completionBlock(YES);
         }];
     }
     else
     {
-        adjustTintDimmed();
         [viewController viewWillAppear:NO];
         completionBlock(NO);
     }
@@ -2053,6 +2029,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
                                                  selector:@selector(keyboardWillHide:)
                                                      name:UIKeyboardWillHideNotification object:nil];
     }
+    
+    overlayView.isAccessibilityElement = YES;
 }
 
 - (void)presentPopoverFromBarButtonItem:(UIBarButtonItem *)aItem
@@ -2225,21 +2203,11 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     CGRect viewFrame;
     CGRect containerFrame = CGRectZero;
-    float minX, maxX, minY, maxY, offset = 0;
+    CGFloat minX, maxX, minY, maxY, offset = 0;
     CGSize containerViewSize = CGSizeZero;
     
-    float overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.width : overlayView.bounds.size.height;
-    float overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.height : overlayView.bounds.size.width;
-    
-    float keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.size.height : keyboardRect.size.width;
-    
-    if (delegate && [delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
-        BOOL shouldIgnore = [delegate popoverControllerShouldIgnoreKeyboardBounds:self];
-        
-        if (shouldIgnore) {
-            keyboardHeight = 0;
-        }
-    }
+    CGFloat overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.width : overlayView.bounds.size.height;
+    CGFloat overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.height : overlayView.bounds.size.width;
     
     WYPopoverArrowDirection arrowDirection = permittedArrowDirections;
     
@@ -2253,7 +2221,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
     minX = popoverLayoutMargins.left;
     maxX = overlayWidth - popoverLayoutMargins.right;
     minY = WYStatusBarHeight() + popoverLayoutMargins.top;
-    maxY = overlayHeight - popoverLayoutMargins.bottom - keyboardHeight;
+    maxY = overlayHeight - popoverLayoutMargins.bottom;
     
     // Which direction ?
     //
@@ -2265,11 +2233,20 @@ static WYPopoverTheme *defaultTheme_ = nil;
     
     // Position of the popover
     //
+    CGFloat keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.size.height : keyboardRect.size.width;
+    
+    if (delegate && [delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
+        BOOL shouldIgnore = [delegate popoverControllerShouldIgnoreKeyboardBounds:self];
+        
+        if (shouldIgnore) {
+            keyboardHeight = 0;
+        }
+    }
     
     minX -= backgroundView.outerShadowInsets.left;
     maxX += backgroundView.outerShadowInsets.right;
     minY -= backgroundView.outerShadowInsets.top;
-    maxY += backgroundView.outerShadowInsets.bottom;
+    maxY += backgroundView.outerShadowInsets.bottom - keyboardHeight;
     
     if (arrowDirection == WYPopoverArrowDirectionDown)
     {
@@ -2500,9 +2477,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
     //
     if (keyboardHeight > 0) {
         
-        float keyboardY = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.origin.y : keyboardRect.origin.x;
+        CGFloat keyboardY = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.origin.y : keyboardRect.origin.x;
         
-        float yOffset = containerFrame.origin.y + containerFrame.size.height - keyboardY;
+        CGFloat yOffset = containerFrame.origin.y + containerFrame.size.height - keyboardY;
         
         if (yOffset > 0) {
             
@@ -2579,13 +2556,13 @@ static WYPopoverTheme *defaultTheme_ = nil;
                     completion:(void (^)(void))completion
                   callDelegate:(BOOL)callDelegate
 {
-    float duration = self.animationDuration;
+    CGFloat duration = self.animationDuration;
     WYPopoverAnimationOptions style = aOptions;
     
     __weak __typeof__(self) weakSelf = self;
     
-    
-    void (^adjustTintAutomatic)() = ^() {
+    void (^afterCompletionBlock)() = ^() {
+        
 #ifdef WY_BASE_SDK_7_ENABLED
         if ([inView.window respondsToSelector:@selector(setTintAdjustmentMode:)]) {
             for (UIView *subview in inView.window.subviews) {
@@ -2595,15 +2572,11 @@ static WYPopoverTheme *defaultTheme_ = nil;
             }
         }
 #endif
-    };
-    
-    void (^completionBlock)() = ^() {
         
         __typeof__(self) strongSelf = weakSelf;
         
-        if (strongSelf) {
-            [strongSelf->backgroundView removeFromSuperview];
-            
+        if (strongSelf)
+        {
             strongSelf->backgroundView = nil;
             
             [strongSelf->overlayView removeFromSuperview];
@@ -2613,15 +2586,42 @@ static WYPopoverTheme *defaultTheme_ = nil;
             {
                 [strongSelf->viewController viewDidDisappear:aAnimated];
             }
+            
+            if (completion)
+            {
+                completion();
+            }
+            else //if (callDelegate)
+            {
+                if (strongSelf->delegate && [strongSelf->delegate respondsToSelector:@selector(popoverControllerDidDismissPopover:)])
+                {
+                    [strongSelf->delegate popoverControllerDidDismissPopover:strongSelf];
+                }
+            }
         }
+    };
+    
+    void (^completionBlock)() = ^() {
         
-        if (completion)
+        __typeof__(self) strongSelf = weakSelf;
+        [strongSelf->backgroundView removeFromSuperview];
+        
+        if (aAnimated)
         {
-            completion();
+            [UIView animateWithDuration:duration animations:^{
+                __typeof__(self) strongSelf = weakSelf;
+                
+                if (strongSelf)
+                {
+                    strongSelf->overlayView.alpha = 0;
+                }
+            } completion:^(BOOL finished) {
+                afterCompletionBlock();
+            }];
         }
-        else if (callDelegate && strongSelf && strongSelf->delegate && [strongSelf->delegate respondsToSelector:@selector(popoverControllerDidDismissPopover:)])
+        else
         {
-            [strongSelf->delegate popoverControllerDidDismissPopover:strongSelf];
+            afterCompletionBlock();
         }
     };
     
@@ -2678,18 +2678,17 @@ static WYPopoverTheme *defaultTheme_ = nil;
                     CGAffineTransform endTransform = [self transformForArrowDirection:strongSelf->backgroundView.arrowDirection];
                     strongSelf->backgroundView.transform = endTransform;
                 }
-                strongSelf->overlayView.alpha = 0;
             }
-            adjustTintAutomatic();
         } completion:^(BOOL finished) {
             completionBlock();
         }];
     }
     else
     {
-        adjustTintAutomatic();
         completionBlock();
     }
+    
+    overlayView.isAccessibilityElement = NO;
 }
 
 #pragma mark KVO
@@ -2745,7 +2744,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 - (WYPopoverArrowDirection)arrowDirectionForRect:(CGRect)aRect
                                           inView:(UIView *)aView
                                      contentSize:(CGSize)contentSize
-                                     arrowHeight:(float)arrowHeight
+                                     arrowHeight:(CGFloat)arrowHeight
                         permittedArrowDirections:(WYPopoverArrowDirection)arrowDirections
 {
     WYPopoverArrowDirection arrowDirection = WYPopoverArrowDirectionUnknown;
@@ -2810,8 +2809,8 @@ static WYPopoverTheme *defaultTheme_ = nil;
         WYPopoverArea *area1 = (WYPopoverArea *)obj1;
         WYPopoverArea *area2 = (WYPopoverArea *)obj2;
         
-        float val1 = area1.value;
-        float val2 = area2.value;
+        CGFloat val1 = area1.value;
+        CGFloat val2 = area2.value;
         
         NSComparisonResult result = NSOrderedSame;
         
@@ -2870,7 +2869,7 @@ static WYPopoverTheme *defaultTheme_ = nil;
 
 - (CGSize)sizeForRect:(CGRect)aRect
                inView:(UIView *)aView
-          arrowHeight:(float)arrowHeight
+          arrowHeight:(CGFloat)arrowHeight
        arrowDirection:(WYPopoverArrowDirection)arrowDirection
 {
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
@@ -2878,9 +2877,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
     CGRect viewFrame = [aView convertRect:aRect toView:nil];
     viewFrame = WYRectInWindowBounds(viewFrame, orientation);
     
-    float minX, maxX, minY, maxY = 0;
+    CGFloat minX, maxX, minY, maxY = 0;
     
-    float keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.size.height : keyboardRect.size.width;
+    CGFloat keyboardHeight = UIInterfaceOrientationIsPortrait(orientation) ? keyboardRect.size.height : keyboardRect.size.width;
     
     if (delegate && [delegate respondsToSelector:@selector(popoverControllerShouldIgnoreKeyboardBounds:)]) {
         BOOL shouldIgnore = [delegate popoverControllerShouldIgnoreKeyboardBounds:self];
@@ -2890,9 +2889,9 @@ static WYPopoverTheme *defaultTheme_ = nil;
         }
     }
     
-    float overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.width : overlayView.bounds.size.height;
+    CGFloat overlayWidth = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.width : overlayView.bounds.size.height;
     
-    float overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.height : overlayView.bounds.size.width;
+    CGFloat overlayHeight = UIInterfaceOrientationIsPortrait(orientation) ? overlayView.bounds.size.height : overlayView.bounds.size.width;
     
     minX = popoverLayoutMargins.left;
     maxX = overlayWidth - popoverLayoutMargins.right;
@@ -2959,10 +2958,10 @@ static NSString* WYStringFromOrientation(NSInteger orientation) {
     return result;
 }
 
-static float WYStatusBarHeight() {
+static CGFloat WYStatusBarHeight() {
     UIInterfaceOrientation orienation = [[UIApplication sharedApplication] statusBarOrientation];
     
-    float statusBarHeight = 0;
+    CGFloat statusBarHeight = 0;
     {
         CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
         statusBarHeight = statusBarFrame.size.height;
@@ -2976,9 +2975,9 @@ static float WYStatusBarHeight() {
     return statusBarHeight;
 }
 
-static float WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orientation)
+static CGFloat WYInterfaceOrientationAngleOfOrientation(UIInterfaceOrientation orientation)
 {
-    float angle;
+    CGFloat angle;
     
     switch (orientation)
     {
@@ -3003,8 +3002,8 @@ static CGRect WYRectInWindowBounds(CGRect rect, UIInterfaceOrientation orientati
     
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
-    float windowWidth = keyWindow.bounds.size.width;
-    float windowHeight = keyWindow.bounds.size.height;
+    CGFloat windowWidth = keyWindow.bounds.size.width;
+    CGFloat windowHeight = keyWindow.bounds.size.height;
     
     CGRect result = rect;
     
@@ -3037,8 +3036,8 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
     
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     
-    float windowWidth = keyWindow.bounds.size.width;
-    float windowHeight = keyWindow.bounds.size.height;
+    CGFloat windowWidth = keyWindow.bounds.size.width;
+    CGFloat windowHeight = keyWindow.bounds.size.height;
     
     CGPoint result = origin;
     
@@ -3062,18 +3061,14 @@ static CGPoint WYPointRelativeToOrientation(CGPoint origin, CGSize size, UIInter
 
 #pragma mark Selectors
 
-- (void)didChangeStatusBarOrientation:(NSNotification *)notification
-{
-    isInterfaceOrientationChanging = YES;
-}
-
 - (void)didChangeDeviceOrientation:(NSNotification *)notification
 {
-    if (isInterfaceOrientationChanging == NO) return;
-    
-    isInterfaceOrientationChanging = NO;
-    
-    if ([viewController isKindOfClass:[UINavigationController class]])
+    // NOOP
+}
+
+- (void)didChangeStatusBarOrientation:(NSNotification *)notification
+{
+        if ([viewController isKindOfClass:[UINavigationController class]])
     {
         UINavigationController* navigationController = (UINavigationController*)viewController;
         
